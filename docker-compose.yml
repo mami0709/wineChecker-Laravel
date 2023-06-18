@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  php:
+    build: ./docker/php
+    volumes:
+      - ./src:/var/www
+    ports:
+      - ${WEB_PORT}:80
+    container_name: ${PHP_CONTAINER}
+
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+        - ${DB_PORT}:3306
+    environment:
+        MYSQL_DATABASE: ${DB_NAME}
+        MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    container_name: ${MYSQL_CONTAINER}
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=${PMA_USER}
+      - PMA_PASSWORD=${PMA_PASS}
+    links:
+      - mysql
+    ports:
+      - ${PMA_PORT}:80
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
+    container_name: ${PMA_CONTAINER}
