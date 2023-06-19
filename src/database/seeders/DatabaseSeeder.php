@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ResultAkaTableSeeder::class);
         $this->call(ResultShiroWinesTableSeeder::class);
         $this->call(RecommendsTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
     }
 }

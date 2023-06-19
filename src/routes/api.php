@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResultAkaController;
 use App\Http\Controllers\ResultShiroWineController;
 use App\Http\Controllers\RecommendController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,9 @@ Route::get('/resultAkaWine', [ResultAkaController::class, 'index']);
 Route::get('/resultShiroWine', [ResultShiroWineController::class, 'index']);
 Route::get('/recommend', [RecommendController::class, 'index']);
 Route::get('/recommend/{id}', [RecommendController::class, 'show']);
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
