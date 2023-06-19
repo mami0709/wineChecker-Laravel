@@ -20,11 +20,8 @@ use App\Http\Controllers\RecommendController;
 Route::get('/resultAkaWine', [ResultAkaController::class, 'index']);
 Route::get('/resultShiroWine', [ResultShiroWineController::class, 'index']);
 Route::get('/recommend', [RecommendController::class, 'index']);
+Route::get('/recommend/{id}', [RecommendController::class, 'show']);
 
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
