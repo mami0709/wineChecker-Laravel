@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResultAkaController;
+use App\Http\Controllers\ResultShiroWineController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,8 @@ use App\Http\Controllers\ResultAkaController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/resultAkaWine', [ResultAkaController::class, 'index']);
+// Route::get('/resultAkaWine', [ResultAkaController::class, 'index']);
+// Route::get('/resultShiroWine', [ResultShiroWineController::class, 'index']);
 
 
 // Route::get('shindan/resultAka', 'resultAkaController@index'); //localhost:8000/resultAka へのルーティング
