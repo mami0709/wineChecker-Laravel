@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\PersonalAccessToken;
+use Exception;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
+
         $credentials = ['mail_address' => $request->email, 'password' => $request->password];
 
         // 認証が成功したら
@@ -19,6 +25,10 @@ class AuthController extends Controller
             $user = User::where('mail_address', $request->email)->first();
             // ユーザーに新しいトークンを生成
             $token = $user->createToken('api-token')->plainTextToken;
+
+            // トークンをDBに保存
+            $user->token = $token;
+            $user->save();
 
             return response()->json(['message' => 'ログイン成功', 'token' => $token]);
         } else {
@@ -59,5 +69,76 @@ class AuthController extends Controller
         ]);
 
         return response()->json(['message' => 'ユーザーが正常に登録されました。']);
+    }
+
+    public function getUser(Request $request)
+    {
+        try {
+            // クエリパラメータからトークンを取得
+            $token = $request->query('token');
+
+            // トークンを使用して認証ユーザーを取得
+            $user = User::where('token', $token)->first();
+
+            // トークンに対応するユーザーがいない場合はエラーを返す
+            if (!$user) {
+                throw new Exception("Invalid token");
+            }
+
+            return response()->json([
+                'id' => $user->id,
+                'user_name' => $user->user_name,
+                'user_name_hiragana' => $user->user_name_hiragana,
+                'nickname' => $user->nickname,
+                'mail_address' => $user->mail_address,
+                'telephone_number' => $user->telephone_number,
+                'user_password' => $user->user_password,
+            ]);
+        } catch (Exception $e) {
+            Log::error('getUser error: ' . $e->getMessage());
+            return response()->json(['message' => 'ユーザー情報の取得に失敗しました。'], 500);
+        }
+    }
+
+    public function updateUser(Request $request)
+    {
+        try {
+            Log::info('updateUser called');
+
+            // クエリパラメータからトークンを取得
+            $token = $request->query('token');
+            Log::info('Token: ' . $token);
+
+            // トークンを使用して認証ユーザーを取得
+            $user = User::where('token', $token)->first();
+            Log::info('User: ', array($user));
+
+            if (!$user) {
+                throw new Exception("Invalid token");
+            }
+
+            // リクエストの内容をログに出力
+            $requestData = json_decode($request->getContent(), true);
+            Log::info('Request data: ', $requestData);
+
+            // リクエストからユーザー情報を更新
+            $user->user_name = $requestData['user_name'];
+            $user->user_name_hiragana = $requestData['user_name_hiragana'];
+            $user->nickname = $requestData['nickname'];
+            $user->mail_address = $requestData['mail_address'];
+            $user->telephone_number = $requestData['telephone_number'];
+            $user->user_password = $requestData['user_password'];
+
+            if ($requestData['user_password'] !== $user->user_password) {
+                $user->user_password = Hash::make($requestData['user_password']);
+            }
+
+            $user->save();
+
+            return response()->json(['message' => 'ユーザー情報が更新されました！']);
+        } catch (Exception $e) {
+            Log::error('updateUser error: ' . $e->getMessage());
+            return response()->json(['message' => 'ユーザー情報の更新に失敗しました。'], 500);
+        }
     }
 }

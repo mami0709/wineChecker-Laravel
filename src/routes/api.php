@@ -26,6 +26,9 @@ Route::get('/recommend/{id}', [RecommendController::class, 'show']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/userInfo/getUser', [AuthController::class, 'getUser']);
+Route::post('/userInfo/updateUser', [AuthController::class, 'updateUser']);
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
