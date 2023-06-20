@@ -22,6 +22,8 @@ Route::get('/resultAkaWine', [ResultAkaController::class, 'index']);
 Route::get('/resultShiroWine', [ResultShiroWineController::class, 'index']);
 Route::get('/recommend', [RecommendController::class, 'index']);
 Route::get('/recommend/{id}', [RecommendController::class, 'show']);
+Route::post('/newPost', [RecommendController::class, 'store']);
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
