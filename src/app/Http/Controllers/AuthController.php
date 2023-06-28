@@ -36,6 +36,19 @@ class AuthController extends Controller
         }
     }
 
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user) {
+            $user->token()->revoke();
+            return response()->json(['message' => 'ログアウトしました'], 200);
+        }
+
+        return response()->json(['message' => '認証されたユーザーが存在しません'], 404);
+    }
+
+
     public function register(Request $request)
     {
         // バリデーションルール

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+// このモデルはusersテーブルと紐づく
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -16,6 +17,8 @@ class User extends Authenticatable
      *
      * @var array
      */
+    
+    // ユーザーが代入可能な属性を定義し
     protected $fillable = [
         'mail_address',
         'user_password',
@@ -27,6 +30,7 @@ class User extends Authenticatable
         'token',
     ];
 
+    // パスワードの取得をカスタマイズするメソッド
     public function getAuthPassword()
     {
         return $this->user_password;
